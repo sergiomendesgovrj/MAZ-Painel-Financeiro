@@ -532,12 +532,27 @@ function renderInsights(){
   const days = Math.max(0, Math.ceil((target-new Date())/(1000*60*60*24)));
 
   // fornecedor concentration across both produto trees (implantação + operação)
+  // exclude internal categories that aren't actual external suppliers
+  const NAO_FORNECEDOR = new Set(['IDG','PESSOAL INSTITUCIONAL','PESSOAL DEDICADO','IMPOSTO','PJ - DIR PROJ','PJ - PROJ','TARIFAS','FOLHA DE PAGAMENTO']);
+  const FORNECEDOR_DESC = {
+    'RCM': 'Empreiteira de obras — estrutura metálica, piso, mobiliário expositivo e áreas comuns',
+    'D3M': 'Obras e projetos complementares — estrutural e elétrico do foyer e do AJURI',
+    'CAMUFLAGEM': 'Montagem da expografia (AJURI e Expo Longa)',
+    'LEVVA': 'Agência de viagens — hospedagem, passagens e aluguel de veículos da equipe',
+    'KAOA': 'Segurança e vigilância patrimonial',
+    'TRAPOS E FIAPOS': 'Elementos cenográficos têxteis (cortinas de taboa) para a expografia',
+    "O'LIMPO": 'Limpeza e conservação do museu',
+    'LUIZ BRAGA': 'Desenvolvimento conceitual de área expositiva e aquisição de obra de arte',
+    'TEMPLE': 'Agência de comunicação — assessoria de imprensa e eventos de divulgação/inauguração',
+    'SALT': 'Equipamentos de som, acústica e sala multiuso',
+  };
   const byForn = {};
   ['IMPLANTAÇÃO','OPERAÇÃO'].forEach(tipo => {
     const tree = DATA.produto_tree[tipo];
     Object.values(tree).forEach(prod => {
       Object.values(prod.children).forEach(grande => {
         Object.entries(grande.children).forEach(([forn, node]) => {
+          if(NAO_FORNECEDOR.has(forn)) return;
           byForn[forn] = (byForn[forn]||0) + node.realizado;
         });
       });
@@ -547,7 +562,10 @@ function renderInsights(){
   const top10 = fornArr.slice(0,10);
   const top10Sum = top10.reduce((s,x)=>s+x[1],0);
   const top10Pct = (top10Sum / t.realizado * 100).toFixed(1);
-  const top10List = top10.map((x,i) => `${i+1}. <b>${x[0]}</b> — ${fmtCompact(x[1])}`).join('<br>');
+  const top10List = top10.map((x,i) => {
+    const desc = FORNECEDOR_DESC[x[0]] ? ` — <span style="color:var(--text-dim);">${FORNECEDOR_DESC[x[0]]}</span>` : '';
+    return `${i+1}. <b>${x[0]}</b> — ${fmtCompact(x[1])}${desc}`;
+  }).join('<br>');
 
   const h = DATA.headers['IMPLANTAÇÃO'];
   const finep = DATA.receitas.fontes.find(f=>f.fonte==='FINEP').patrocinadores.find(p=>p.nome==='FINEP');
@@ -566,8 +584,8 @@ function renderInsights(){
       body:`A linha <b>EXPOSIÇÃO</b> concentra o maior saldo a contratar da Implantação: <span class="mono">${expo?fmtCompact(expo.saldo):'—'}</span> pendente sobre um planejado de <span class="mono">${expo?fmtCompact(expo.planejado):'—'}</span> (${expo?expo.pct_executado.toFixed(1):'—'}% executado).`
     },
     {
-      cls:'watch', kicker:'⚠ Concentração de fornecedores', title:`Top 10 fornecedores = ${top10Pct}% do realizado`,
-      body:`Os 10 maiores fornecedores/contratados (Implantação + Operação) respondem por <b>${top10Pct}%</b> de tudo já realizado:<br><br>${top10List}`
+      cls:'watch', kicker:'⚠ Concentração de fornecedores', title:`Top 10 fornecedores externos = ${top10Pct}% do realizado`,
+      body:`Os 10 maiores fornecedores externos (excluindo categorias internas como pessoal e impostos) respondem por <b>${top10Pct}%</b> de tudo já realizado em Implantação + Operação:<br><br>${top10List}`
     },
     {
       cls:'watch', kicker:'⚠ Fontes com maior exposição', title:`${fontes[0].fonte} e ${fontes[1].fonte} concentram o saldo pendente`,
