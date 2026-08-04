@@ -222,19 +222,24 @@ footer{margin-top:50px; padding-top:18px; border-top:1px solid var(--line); font
 
   <div class="section">
     <div class="section-head">
-      <div class="section-title"><span class="idx">01</span>Fontes de financiamento</div>
-      <div class="section-note">Exposição por financiador — planejado, executado e saldo pendente por fonte de recurso.</div>
+      <div class="section-title"><span class="idx">01</span>Receitas</div>
+      <div class="section-note">Fonte pagadora e patrocinador por ano.</div>
     </div>
-    <div class="grid2">
-      <div class="panel">
-        <div class="gauge-header">
-          <span class="gh-label">Fonte</span>
-          <span class="gh-track"></span>
-          <span class="gh-figs"><span>Planejado</span><span>%</span><span>Saldo</span></span>
-        </div>
-        <div id="fonteGauges"></div>
+    <div class="panel">
+      <div class="table-scroll" style="max-height:560px;">
+        <table id="receitasTable">
+          <thead><tr>
+            <th style="width:36px;"></th>
+            <th>Fonte pagadora / Patrocinador</th>
+            <th class="num">2024</th>
+            <th class="num">2025</th>
+            <th class="num">2026</th>
+            <th class="num">Total geral</th>
+          </tr></thead>
+          <tbody id="receitasTbody"></tbody>
+          <tfoot id="receitasTfoot"></tfoot>
+        </table>
       </div>
-      <div class="panel"><div id="fonteChart"></div></div>
     </div>
   </div>
 
@@ -270,31 +275,7 @@ footer{margin-top:50px; padding-top:18px; border-top:1px solid var(--line); font
 
   <div class="section">
     <div class="section-head">
-      <div class="section-title"><span class="idx">03</span>Receitas</div>
-      <div class="section-note">Fonte pagadora e patrocinador por ano.</div>
-    </div>
-    <div class="alert-banner" id="finepAlert"></div>
-    <div class="panel">
-      <div class="table-scroll" style="max-height:560px;">
-        <table id="receitasTable">
-          <thead><tr>
-            <th style="width:36px;"></th>
-            <th>Fonte pagadora / Patrocinador</th>
-            <th class="num">2024</th>
-            <th class="num">2025</th>
-            <th class="num">2026</th>
-            <th class="num">Total geral</th>
-          </tr></thead>
-          <tbody id="receitasTbody"></tbody>
-          <tfoot id="receitasTfoot"></tfoot>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <div class="section">
-    <div class="section-head">
-      <div class="section-title"><span class="idx">04</span>Análises financeiras</div>
+      <div class="section-title"><span class="idx">03</span>Análises financeiras</div>
       <div class="section-note">Leituras geradas a partir dos dados do orçamento master.</div>
     </div>
     <div class="insights" id="insightsGrid"></div>
@@ -386,56 +367,6 @@ function gaugeRowHTML({label, sub, planejado, realizado, comprometido, saldo, pc
         <span class="g-saldo">${fmtCompact(saldo)}</span>
       </div>
       ${clickable ? `<span class="arrow">${arrow}</span>` : ''}
-    </div>`;
-}
-
-// ---------- Fonte gauges + donut ----------
-function renderFonteGauges(){
-  const rows = DATA.by_fonte.filter(x => x.tipo === currentTipo).sort((a,b) => b.planejado - a.planejado);
-  document.getElementById('fonteGauges').innerHTML = rows.map(r =>
-    gaugeRowHTML({label:r.fonte, sub:`Planejado ${fmtCompact(r.planejado)}`, planejado:r.planejado, realizado:r.realizado, comprometido:r.comprometido, saldo:r.saldo, pct:r.pct_executado, clickable:false})
-  ).join('');
-  renderFonteChart(rows);
-}
-
-const DONUT_PALETTE = ['#5FC1B4','#D8A94A','#C1613D','#7f9e95','#3a8a7f','#9c8450','#8a6d2e','#4a6b62','#b98c3f'];
-
-function renderFonteChart(rows){
-  const wrap = document.getElementById('fonteChart');
-  const sorted = [...rows].filter(r=>r.saldo > 0).sort((a,b)=>b.saldo-a.saldo);
-  const total = sorted.reduce((s,r)=>s+r.saldo, 0);
-  if(!total || !sorted.length){
-    wrap.innerHTML = '<div style="color:var(--text-dim); font-size:13px; padding:20px;">Sem saldo em aberto nesta visão.</div>';
-    return;
-  }
-  const cx = 90, cy = 90, r = 62, stroke = 26;
-  const circumference = 2 * Math.PI * r;
-  let offset = 0;
-  let arcs = '';
-  sorted.forEach((row, i) => {
-    const frac = row.saldo / total;
-    const len = frac * circumference;
-    const color = DONUT_PALETTE[i % DONUT_PALETTE.length];
-    arcs += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="${stroke}"
-      stroke-dasharray="${len} ${circumference - len}" stroke-dashoffset="${-offset}"
-      transform="rotate(-90 ${cx} ${cy})" stroke-linecap="butt"><title>${row.fonte}: ${fmt.format(row.saldo)}</title></circle>`;
-    offset += len;
-  });
-  const legend = sorted.map((row, i) => `
-    <div style="display:flex;align-items:center;gap:7px;font-size:11px;color:var(--text-mut);font-family:'IBM Plex Mono',monospace;padding:3px 0;">
-      <span style="width:10px;height:10px;border-radius:2px;background:${DONUT_PALETTE[i % DONUT_PALETTE.length]};flex:0 0 auto;"></span>
-      <span style="flex:1;color:var(--text);">${row.fonte}</span>
-      <span>${fmtCompact(row.saldo)}</span>
-    </div>`).join('');
-  wrap.innerHTML = `
-    <div style="font-family:'Fraunces',serif; font-size:14px; font-weight:600; color:var(--text); margin-bottom:14px;">Saldo a contratar por fonte</div>
-    <div style="display:flex; gap:22px; align-items:center; flex-wrap:wrap;">
-      <svg width="180" height="180" viewBox="0 0 180 180" style="flex:0 0 auto;">
-        ${arcs}
-        <text x="90" y="85" text-anchor="middle" fill="var(--text)" font-family="'Fraunces',serif" font-size="17" font-weight="600">${fmtCompact(total)}</text>
-        <text x="90" y="103" text-anchor="middle" fill="var(--text-dim)" font-family="'IBM Plex Mono',monospace" font-size="9">SALDO TOTAL</text>
-      </svg>
-      <div style="flex:1; min-width:160px;">${legend}</div>
     </div>`;
 }
 
@@ -586,12 +517,6 @@ function renderReceitas(){
       renderReceitas();
     });
   });
-
-  // FINEP 2026 alert banner
-  const finep = r.fontes.find(f=>f.fonte==='FINEP').patrocinadores.find(p=>p.nome==='FINEP');
-  document.getElementById('finepAlert').innerHTML = `
-    <div class="a-icon">⚠️</div>
-    <div class="a-text"><b>Ainda não recebemos os ${fmtCompact(finep['2026'])} previstos para 2026 da FINEP.</b> Esse valor (${fmt.format(finep['2026'])}) precisa ser recebido em agosto para não comprometer o fluxo de caixa até a reabertura.</div>`;
 }
 
 // ---------- Insights ----------
@@ -670,7 +595,6 @@ function renderInsights(){
 // ---------- Render orchestration ----------
 function renderAll(){
   renderKPIs();
-  renderFonteGauges();
 }
 
 document.getElementById('tabBar').addEventListener('click', (e) => {
