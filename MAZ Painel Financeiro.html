@@ -8,19 +8,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
 :root{
-  --bg-deep:#0A1D19; --bg-panel:#0F2A24; --bg-panel-2:#123329; --bg-card:#153a30;
-  --line:#24493d; --line-soft:#1c3c32;
-  --river:#5FC1B4; --river-dim:#3a8a7f;
-  --sand:#D9CFAE; --gold:#D8A94A; --rust:#C1613D;
-  --text:#EDEFE7; --text-mut:#9FB8AF; --text-dim:#6f8981;
+  --bg-deep:#0A1128; --bg-panel:#101B3D; --bg-panel-2:#132049; --bg-card:#152352;
+  --line:#293B6E; --line-soft:#1E2E5C;
+  --river:#22D3C5; --river-dim:#159E93;
+  --sand:#B9C6E8; --gold:#E8B84B; --rust:#E0654B;
+  --text:#F1F4FB; --text-mut:#93A3C9; --text-dim:#5E6D97;
   --radius:10px;
 }
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;}
 body{
   background:
-    radial-gradient(ellipse 1200px 600px at 15% -10%, rgba(95,193,180,0.10), transparent 60%),
-    radial-gradient(ellipse 900px 500px at 100% 0%, rgba(216,169,74,0.06), transparent 55%),
+    radial-gradient(ellipse 1200px 600px at 15% -10%, rgba(34,211,197,0.10), transparent 60%),
+    radial-gradient(ellipse 900px 500px at 100% 0%, rgba(232,184,75,0.05), transparent 55%),
     var(--bg-deep);
   color:var(--text); font-family:'IBM Plex Sans', system-ui, sans-serif; min-height:100vh;
   -webkit-font-smoothing:antialiased;
@@ -45,17 +45,24 @@ h1.title em{font-style:italic; font-weight:300; color:var(--sand);}
 .tab:hover{border-color:var(--river-dim); color:var(--text);}
 .tab.active{background:var(--river); color:#062019; border-color:var(--river); font-weight:600;}
 
-.kpi-row{display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:12px;}
-.kpi-row.secondary{grid-template-columns:repeat(2,1fr); margin-bottom:30px;}
-@media (max-width:1100px){.kpi-row{grid-template-columns:repeat(2,1fr);} .kpi-row.secondary{grid-template-columns:repeat(2,1fr);}}
-.kpi{background:linear-gradient(160deg, var(--bg-card), var(--bg-panel)); border:1px solid var(--line); border-radius:var(--radius); padding:16px 18px; position:relative; overflow:hidden;}
-.kpi::after{content:''; position:absolute; top:0; right:0; width:60px; height:60px; background:radial-gradient(circle, rgba(95,193,180,0.12), transparent 70%);}
-.kpi .k-label{font-size:10.5px; text-transform:uppercase; letter-spacing:.1em; color:var(--text-dim); font-family:'IBM Plex Mono',monospace;}
-.kpi .k-value{font-family:'Fraunces', serif; font-size:24px; font-weight:600; margin-top:6px; color:var(--text);}
-.kpi.accent .k-value{color:var(--river);}
-.kpi.warn .k-value{color:var(--gold);}
-.kpi.dim{opacity:.85;}
-.kpi .k-sub{font-size:11.5px; color:var(--text-mut); margin-top:4px;}
+.top-grid{display:flex; gap:20px; align-items:stretch; margin-bottom:34px;}
+.kpi-sidebar{width:280px; max-width:100%; flex:0 0 280px; display:flex; flex-direction:column; gap:10px; margin-bottom:0;}
+.receitas-side{flex:1 1 auto; min-width:0; padding:18px 20px;}
+.receitas-side-head{margin-bottom:12px;}
+.receitas-side-head .section-note{margin-top:2px;}
+@media (max-width:900px){
+  .top-grid{flex-direction:column;}
+  .kpi-sidebar{width:100%; flex:0 0 auto;}
+}
+.kpi-box{border:1.5px solid var(--river); border-radius:8px; padding:13px 18px; background:rgba(34,211,197,0.03);}
+.kpi-box .kb-value{font-family:'IBM Plex Sans',sans-serif; font-size:24px; font-weight:700; color:var(--river); letter-spacing:-.01em;}
+.kpi-box .kb-label{font-size:11.5px; color:var(--text-mut); margin-top:2px;}
+.kpi-box.warn{border-color:var(--gold);}
+.kpi-box.warn .kb-value{color:var(--gold);}
+.kpi-gauge-box{border:1.5px solid var(--river); border-radius:8px; padding:14px 18px 10px; text-align:center;}
+.kpi-gauge-box .gauge-caption{font-size:11.5px; color:var(--text-mut); margin-top:2px;}
+.kpi-reserva-note{font-size:11.5px; color:var(--text-dim); padding:2px 4px; line-height:1.5;}
+.kpi-reserva-note b{color:var(--text-mut); font-weight:600;}
 .spacer-note{font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.1em; margin:20px 0 8px;}
 
 .section{margin-bottom:36px;}
@@ -172,7 +179,16 @@ tr.tree-row-item td.num{color:var(--text-dim);}
 
 
 .insights{display:grid; grid-template-columns:repeat(2,1fr); gap:14px;}
-@media (max-width:900px){.insights{grid-template-columns:1fr;}}
+.insight-card.wide{grid-column:1 / -1;}
+.reserva-pill{
+  background:var(--river); border-radius:8px; padding:13px 18px; text-align:center;
+  display:flex; flex-direction:row; align-items:baseline; justify-content:center; gap:8px;
+}
+.reserva-pill .rp-label{font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:.1em; color:var(--bg-deep); opacity:.75; font-weight:600;}
+.reserva-pill .rp-value{font-family:'IBM Plex Sans',sans-serif; font-size:18px; font-weight:700; color:var(--bg-deep);}
+@media (max-width:900px){.insights{grid-template-columns:1fr;} .insight-card.wide{grid-column:auto;}}
+.forn-list{display:grid; grid-template-columns:repeat(2,1fr); gap:4px 24px; margin-top:10px;}
+@media (max-width:560px){.forn-list{grid-template-columns:1fr;}}
 .insight-card{background:var(--bg-panel); border:1px solid var(--line); border-radius:var(--radius); padding:18px; border-left:3px solid var(--river-dim);}
 .insight-card.risk{border-left-color:var(--rust);}
 .insight-card.watch{border-left-color:var(--gold);}
@@ -191,7 +207,6 @@ footer{margin-top:50px; padding-top:18px; border-top:1px solid var(--line); font
   .gauge-figs{width:150px;}
   .gauge-figs .g-saldo, .gauge-figs .g-planejado{display:none;}
   h1.title{font-size:28px;}
-  .kpi-row{grid-template-columns:repeat(2,1fr);}
 }
 </style>
 </head>
@@ -217,16 +232,15 @@ footer{margin-top:50px; padding-top:18px; border-top:1px solid var(--line); font
     <button class="tab" data-tipo="OPERAÇÃO">Operação</button>
   </div>
 
-  <div class="kpi-row" id="kpiRow"></div>
-  <div class="kpi-row secondary" id="kpiRowSecondary"></div>
+  <div class="top-grid">
+    <div class="kpi-sidebar" id="kpiSidebar"></div>
 
-  <div class="section">
-    <div class="section-head">
-      <div class="section-title"><span class="idx">01</span>Receitas</div>
-      <div class="section-note">Fonte pagadora e patrocinador por ano.</div>
-    </div>
-    <div class="panel">
-      <div class="table-scroll" style="max-height:560px;">
+    <div class="receitas-side panel">
+      <div class="receitas-side-head">
+        <div class="section-title" style="font-size:16px;">Receitas</div>
+        <div class="section-note" style="text-align:left;">Fonte pagadora e patrocinador por ano.</div>
+      </div>
+      <div class="table-scroll" style="max-height:420px;">
         <table id="receitasTable">
           <thead><tr>
             <th style="width:36px;"></th>
@@ -245,7 +259,7 @@ footer{margin-top:50px; padding-top:18px; border-top:1px solid var(--line); font
 
   <div class="section">
     <div class="section-head">
-      <div class="section-title"><span class="idx">02</span>Detalhamento por produto</div>
+      <div class="section-title"><span class="idx">01</span>Detalhamento por produto</div>
       <div class="section-note">Produto → Grande linha → Fornecedor → Descrição. Clique em <span style="color:var(--river)">+</span> / <span style="color:var(--river)">−</span> para expandir.</div>
     </div>
     <div class="tree-totals" id="treeTotals"></div>
@@ -275,7 +289,7 @@ footer{margin-top:50px; padding-top:18px; border-top:1px solid var(--line); font
 
   <div class="section">
     <div class="section-head">
-      <div class="section-title"><span class="idx">03</span>Análises financeiras</div>
+      <div class="section-title"><span class="idx">02</span>Análises financeiras</div>
       <div class="section-note">Leituras geradas a partir dos dados do orçamento master.</div>
     </div>
     <div class="insights" id="insightsGrid"></div>
@@ -310,64 +324,62 @@ function renderCountdown(){
 }
 
 // ---------- KPI cards ----------
+function semicircleGaugeSVG(pct){
+  const cx = 100, cy = 96, r = 78, stroke = 16;
+  const clamped = Math.max(0, Math.min(100, pct));
+  const polar = (angleDeg) => {
+    const rad = angleDeg * Math.PI / 180;
+    return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+  };
+  const arcPath = (startAngle, endAngle) => {
+    const s = polar(startAngle), e = polar(endAngle);
+    const largeArc = (endAngle - startAngle) > 180 ? 1 : 0;
+    return `M ${s.x} ${s.y} A ${r} ${r} 0 ${largeArc} 1 ${e.x} ${e.y}`;
+  };
+  const bgPath = arcPath(180, 360);
+  const fgPath = arcPath(180, 180 + (180 * clamped / 100));
+  const color = pct >= 100 ? 'var(--river)' : (pct >= 70 ? 'var(--river)' : 'var(--gold)');
+  return `
+    <svg width="200" height="118" viewBox="0 0 200 118">
+      <path d="${bgPath}" fill="none" stroke="var(--line)" stroke-width="${stroke}" stroke-linecap="round"/>
+      <path d="${fgPath}" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-linecap="round"/>
+      <text x="100" y="88" text-anchor="middle" fill="var(--text)" font-family="'IBM Plex Sans',sans-serif" font-size="26" font-weight="700">${pct.toFixed(1)}%</text>
+      <text x="18" y="112" text-anchor="start" fill="var(--text-dim)" font-family="'IBM Plex Mono',monospace" font-size="10">0%</text>
+      <text x="182" y="112" text-anchor="end" fill="var(--text-dim)" font-family="'IBM Plex Mono',monospace" font-size="10">100%</text>
+    </svg>`;
+}
+
 function renderKPIs(){
   const t = DATA.totals.find(x => x.tipo === currentTipo);
-  const cards = [
-    {label:'Planejado', value: t.planejado, cls:''},
-    {label:'Realizado', value: t.realizado, cls:'accent'},
-    {label:'Comprometido', value: t.comprometido, cls:''},
-    {label:'Saldo a contratar', value: t.saldo, cls:'warn'},
-    {label:'% Executado', value: t.pct_executado, cls:'accent', pct:true},
+  const boxes = [
+    {label:'Planejado', value: t.planejado},
+    {label:'Realizado', value: t.realizado},
+    {label:'Comprometido', value: t.comprometido},
+    {label:'Saldo a contratar', value: t.saldo, warn:true},
   ];
-  document.getElementById('kpiRow').innerHTML = cards.map(c => `
-    <div class="kpi ${c.cls}">
-      <div class="k-label">${c.label}</div>
-      <div class="k-value">${c.pct ? c.value.toLocaleString('pt-BR',{maximumFractionDigits:1})+'%' : fmtCompact(c.value)}</div>
-      <div class="k-sub">${c.pct ? '(Realizado + Comprometido) / Planejado' : fmt.format(c.value)}</div>
+  let html = boxes.map(b => `
+    <div class="kpi-box ${b.warn?'warn':''}">
+      <div class="kb-value">${fmtCompact(b.value)}</div>
+      <div class="kb-label">${b.label} · ${fmt.format(b.value)}</div>
     </div>
   `).join('');
 
-  // secondary row: receita/reserva, only meaningful for IMPLANTAÇÃO (and shown blended info on TODOS)
-  const sec = document.getElementById('kpiRowSecondary');
-  if(currentTipo === 'OPERAÇÃO'){
-    sec.style.display = 'none';
-    sec.innerHTML = '';
-    return;
-  }
-  sec.style.display = 'grid';
-  const h = DATA.headers['IMPLANTAÇÃO'];
-  sec.innerHTML = `
-    <div class="kpi dim">
-      <div class="k-label">Receita total do projeto</div>
-      <div class="k-value">${fmtCompact(h.receita_total)}</div>
-      <div class="k-sub">${fmt.format(h.receita_total)} · Implantação</div>
-    </div>
-    <div class="kpi dim">
-      <div class="k-label">Reserva</div>
-      <div class="k-value">${fmtCompact(h.reserva)}</div>
-      <div class="k-sub">Receita líquida disponível: ${fmt.format(h.receita_liquida)}</div>
-    </div>
-  `;
-}
-
-// ---------- Flow gauge row ----------
-function gaugeRowHTML({label, sub, planejado, realizado, comprometido, saldo, pct, clickable, arrow}){
-  const rPct = planejado ? (realizado/planejado*100) : 0;
-  const cPct = planejado ? (comprometido/planejado*100) : 0;
-  return `
-    <div class="gauge-row ${clickable ? '' : 'leaf'}" ${clickable ? 'data-drill="1"' : ''}>
-      <div class="gauge-label">${label}${sub ? `<span class="sub">${sub}</span>`:''}</div>
-      <div class="gauge-track">
-        <div class="gauge-seg realizado" style="width:${rPct}%"></div>
-        <div class="gauge-seg comprometido" style="width:${cPct}%"></div>
-      </div>
-      <div class="gauge-figs">
-        <span class="g-planejado">${fmtCompact(planejado)}</span>
-        <span class="g-pct">${pct.toFixed(0)}%</span>
-        <span class="g-saldo">${fmtCompact(saldo)}</span>
-      </div>
-      ${clickable ? `<span class="arrow">${arrow}</span>` : ''}
+  html += `
+    <div class="kpi-gauge-box">
+      ${semicircleGaugeSVG(t.pct_executado)}
+      <div class="gauge-caption">Consumo — (Realizado + Comprometido) / Planejado</div>
     </div>`;
+
+  if(currentTipo !== 'OPERAÇÃO'){
+    const h = DATA.headers['IMPLANTAÇÃO'];
+    html += `
+      <div class="reserva-pill">
+        <div class="rp-label">Reserva</div>
+        <div class="rp-value">${fmt.format(h.reserva)}</div>
+      </div>`;
+  }
+
+  document.getElementById('kpiSidebar').innerHTML = html;
 }
 
 // ---------- Produto tree table ----------
@@ -562,10 +574,10 @@ function renderInsights(){
   const top10 = fornArr.slice(0,10);
   const top10Sum = top10.reduce((s,x)=>s+x[1],0);
   const top10Pct = (top10Sum / t.realizado * 100).toFixed(1);
-  const top10List = top10.map((x,i) => {
+  const top10List = `<div class="forn-list">` + top10.map((x,i) => {
     const desc = FORNECEDOR_DESC[x[0]] ? ` — <span style="color:var(--text-dim);">${FORNECEDOR_DESC[x[0]]}</span>` : '';
-    return `${i+1}. <b>${x[0]}</b> — ${fmtCompact(x[1])}${desc}`;
-  }).join('<br>');
+    return `<div>${i+1}. <b>${x[0]}</b> — ${fmtCompact(x[1])}${desc}</div>`;
+  }).join('') + `</div>`;
 
   const h = DATA.headers['IMPLANTAÇÃO'];
   const finep = DATA.receitas.fontes.find(f=>f.fonte==='FINEP').patrocinadores.find(p=>p.nome==='FINEP');
@@ -584,8 +596,8 @@ function renderInsights(){
       body:`A linha <b>EXPOSIÇÃO</b> concentra o maior saldo a contratar da Implantação: <span class="mono">${expo?fmtCompact(expo.saldo):'—'}</span> pendente sobre um planejado de <span class="mono">${expo?fmtCompact(expo.planejado):'—'}</span> (${expo?expo.pct_executado.toFixed(1):'—'}% executado).`
     },
     {
-      cls:'watch', kicker:'⚠ Concentração de fornecedores', title:`Top 10 fornecedores externos = ${top10Pct}% do realizado`,
-      body:`Os 10 maiores fornecedores externos (excluindo categorias internas como pessoal e impostos) respondem por <b>${top10Pct}%</b> de tudo já realizado em Implantação + Operação:<br><br>${top10List}`
+      cls:'', kicker:'Reserva e receita', title:`Reserva equivale a ${(h.reserva/h.receita_total*100).toFixed(1)}% da receita total`,
+      body:`Da receita total do projeto (<span class="mono">${fmt.format(h.receita_total)}</span>), <span class="mono">${fmt.format(h.reserva)}</span> estão reservados para eventualidades, deixando <span class="mono">${fmt.format(h.receita_liquida)}</span> disponíveis — praticamente o total planejado para Implantação + Operação (<span class="mono">${fmt.format(t.planejado)}</span>).`
     },
     {
       cls:'watch', kicker:'⚠ Fontes com maior exposição', title:`${fontes[0].fonte} e ${fontes[1].fonte} concentram o saldo pendente`,
@@ -596,18 +608,29 @@ function renderInsights(){
       body:`Entre as macro linhas da Operação, <b>RECURSOS HUMANOS</b> está em apenas <b>${rhOp?rhOp.pct_executado.toFixed(1):'—'}%</b> de execução, com <span class="mono">${rhOp?fmtCompact(rhOp.saldo):'—'}</span> de saldo.`
     },
     {
-      cls:'', kicker:'Reserva e receita', title:`Reserva equivale a ${(h.reserva/h.receita_total*100).toFixed(1)}% da receita total`,
-      body:`Da receita total do projeto (<span class="mono">${fmt.format(h.receita_total)}</span>), <span class="mono">${fmt.format(h.reserva)}</span> estão reservados para eventualidades, deixando <span class="mono">${fmt.format(h.receita_liquida)}</span> disponíveis — praticamente o total planejado para Implantação + Operação (<span class="mono">${fmt.format(t.planejado)}</span>).`
+      cls:'watch wide', kicker:'⚠ Concentração de fornecedores', title:`Top 10 fornecedores externos = ${top10Pct}% do realizado`,
+      body:`Os 10 maiores fornecedores externos (excluindo categorias internas como pessoal e impostos) respondem por <b>${top10Pct}%</b> de tudo já realizado em Implantação + Operação:${top10List}`
     },
   ];
 
-  grid.innerHTML = cards.map(c => `
+  grid.innerHTML = cards.map(c => {
+    if(c.special === 'pill'){
+      return `
+        <div class="insight-card pill-wrap">
+          <div class="reserva-pill">
+            <div class="rp-label">${c.label}</div>
+            <div class="rp-value">${fmt.format(c.value)}</div>
+          </div>
+        </div>`;
+    }
+    return `
     <div class="insight-card ${c.cls}">
       <div class="i-kicker">${c.kicker}</div>
       <div class="i-title">${c.title}</div>
       <div class="i-body">${c.body}</div>
     </div>
-  `).join('');
+  `;
+  }).join('');
 }
 
 // ---------- Render orchestration ----------
