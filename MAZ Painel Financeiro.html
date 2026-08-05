@@ -579,9 +579,17 @@ function renderInsights(){
     'SALT': 'Equipamentos de som, acústica e sala multiuso',
     'ROBERTA CARVALHO': 'Produtora da sala Diversidade com Essência',
     'BE.BO': 'Time de arquitetura da Expo de Longa Duração do MAZ',
+    'LUZ E FERREIRA ADV': 'Assessoria jurídica do projeto',
+    'INOVATEC': 'TI e infraestrutura tecnológica da expografia',
+    'PREVAT': 'Brigada de incêndio e segurança contra incêndio',
+    'ASTECEL': 'Equipamentos e cabeamento da exposição',
+    'LEDFIX': 'Painéis de LED e instalação na exposição',
+    'MÉTRICA': 'Instalação elétrica da exposição de longa duração',
+    'CRONOS': 'Segurança patrimonial',
+    'OLIMPO': "Limpeza e conservação do museu (mesmo fornecedor de O'LIMPO, grafia divergente na planilha)",
   };
   const byForn = {};
-  ['IMPLANTAÇÃO','OPERAÇÃO'].forEach(tipo => {
+  ['IMPLANTAÇÃO','OPERAÇÃO','INSTITUCIONAL'].forEach(tipo => {
     const tree = DATA.produto_tree[tipo];
     Object.values(tree).forEach(prod => {
       Object.values(prod.children).forEach(grande => {
@@ -593,10 +601,10 @@ function renderInsights(){
     });
   });
   const fornArr = Object.entries(byForn).sort((a,b)=>b[1]-a[1]);
-  const top10 = fornArr.slice(0,10);
-  const top10Sum = top10.reduce((s,x)=>s+x[1],0);
-  const top10Pct = (top10Sum / (t.realizado + t.comprometido) * 100).toFixed(1);
-  const top10List = `<div class="forn-list">` + top10.map((x,i) => {
+  const top20 = fornArr.slice(0,20);
+  const top20Sum = top20.reduce((s,x)=>s+x[1],0);
+  const top20Pct = (top20Sum / (t.realizado + t.comprometido) * 100).toFixed(1);
+  const top20List = `<div class="forn-list">` + top20.map((x,i) => {
     const desc = FORNECEDOR_DESC[x[0]] ? ` — <span style="color:var(--text-dim);">${FORNECEDOR_DESC[x[0]]}</span>` : '';
     return `<div>${i+1}. <b>${x[0]}</b> — ${fmtCompact(x[1])}${desc}</div>`;
   }).join('') + `</div>`;
@@ -631,8 +639,8 @@ function renderInsights(){
       body:`Entre as macro linhas da Operação, <b>RECURSOS HUMANOS</b> está em apenas <b>${rhOp?rhOp.pct_executado.toFixed(1):'—'}%</b> de execução, com <span class="mono">${rhOp?fmtCompact(rhOp.saldo):'—'}</span> de saldo.`
     },
     {
-      cls:'watch wide', kicker:'⚠ Concentração de fornecedores', title:`Top 10 fornecedores externos = ${top10Pct}% do realizado + comprometido`,
-      body:`Os 10 maiores fornecedores externos (excluindo categorias internas como pessoal e impostos), somando realizado + comprometido, respondem por <b>${top10Pct}%</b> de tudo já realizado ou comprometido em Implantação + Operação:${top10List}`
+      cls:'watch wide', kicker:'⚠ Concentração de fornecedores', title:`Top 20 de ${fornArr.length} fornecedores externos = ${top20Pct}% do realizado + comprometido`,
+      body:`No total, o orçamento tem <b>${fornArr.length} fornecedores externos</b> distintos (excluindo categorias internas como pessoal e impostos). Os 20 maiores, somando realizado + comprometido, já respondem por <b>${top20Pct}%</b> de tudo já realizado ou comprometido no orçamento total (Implantação + Operação + Institucional):${top20List}`
     },
   ];
 
