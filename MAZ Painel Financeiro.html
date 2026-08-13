@@ -270,49 +270,24 @@ footer{margin-top:50px; padding-top:18px; border-top:1px solid var(--line); font
   <div class="section">
     <div class="section-head">
       <div class="section-title"><span class="idx">01</span>Fluxo de caixa projetado</div>
-      <div class="section-note">Saldo de caixa acumulado, mês a mês — consolidado e por fonte de recurso.</div>
+      <div class="section-note">Saldo por fonte de recurso, ago–dez/2026.</div>
     </div>
-    <div class="alert-banner" id="fluxoAlert"></div>
-    <div class="panel">
-      <div id="fluxoChart"></div>
-    </div>
-    <div class="panel" style="margin-top:14px;">
-      <div class="fluxo-fonte-head">Quando cada fonte fica negativa</div>
-      <div class="table-scroll" style="max-height:360px;">
-        <table id="fluxoFonteTable">
-          <thead><tr>
-            <th>Fonte</th>
-            <th class="num">Saldo em ago/2026</th>
-            <th>Fica negativa em</th>
-            <th class="num">Saldo em dez/2026</th>
-          </tr></thead>
-          <tbody id="fluxoFonteTbody"></tbody>
-        </table>
-      </div>
+    <div class="alert-banner">
+      <div class="a-icon">⚠️</div>
+      <div class="a-text"><b>Rouanet fecha dezembro/2026 negativa (-R$ 125.937), entrando no vermelho em Nov/26</b> — mesmo com o reforço de Vale + New Fortress Energy.</div>
     </div>
     <div class="panel" style="margin-top:14px;">
-      <div class="fluxo-fonte-head">Cenário único: museu abre em outubro/2026</div>
-      <div style="font-size:12px; color:var(--text-mut); margin-bottom:14px; line-height:1.6;">
-        Baseado no "Cenário 3" da planilha oficial da equipe de orçamento (Fluxo de Caixa, reunião jul/2026, versão mais recente) — saldos iniciais e despesa mensal por fonte já vêm prontos de lá, incluindo o salto natural de outubro (quando Programação e Administração saem do regime "museu fechado com equipe mínima" para o custo pleno de operação). <b>Vale</b> (R$1,5M) e <b>New Fortress Energy</b> (6× R$500k) somam R$4,5M na fonte <b>Rouanet</b>; a fonte <b>BNDES</b> recebe R$869.400. A distribuição exata desses valores dentro dos meses ago–dez é uma aproximação minha reconciliada com os totais oficiais — os saldos de fechamento em dez/2026 batem com a planilha; a data exata de queda abaixo de zero em meses intermediários pode variar um pouco conforme o dia exato de cada depósito. De jan/2027 em diante é projeção minha, mantendo a despesa de dez/26 constante e sem novas receitas.
-      </div>
-      <div class="alert-banner" style="margin-bottom:14px;">
-        <div class="a-icon">⚠️</div>
-        <div class="a-text"><b>Mudança em relação à versão anterior: a Rouanet agora fecha dezembro/2026 negativa (-R$ 125.936)</b>, mesmo com o reforço de Vale + New Fortress. Antes fechava positiva (R$33.775). A despesa mensal da Rouanet subiu (de ~R$650k para ~R$900k/mês a partir de outubro) mais do que a receita cobre.</div>
-      </div>
-      <div style="font-size:12px; color:var(--text-mut); margin-bottom:14px; line-height:1.6;">
-        <b style="color:var(--gold);">Sobre a Hydro:</b> o saldo negativo da Hydro (-R$120.379) é uma readequação que já está encaminhada — esse valor precisa ser devolvido à matriz, não é uma pendência de caixa em aberto.
-        <br><br>
-        <b style="color:var(--gold);">Sobre a VNI:</b> a verba VNI é destinada preferencialmente para o caixa mínimo do IDG, para ações de interesse institucional — por isso não entra na despesa operacional.
-      </div>
-      <div id="fluxoUnicoChart"></div>
-      <div class="table-scroll" style="max-height:400px; margin-top:14px;">
+      <div class="table-scroll" style="max-height:400px;">
         <table id="fluxoUnicoTable">
           <thead><tr>
-            <th style="width:32px;"></th>
             <th>Fonte</th>
-            <th class="num">Saldo inicial (jul/26)</th>
-            <th class="num">Saldo final dez/26 (oficial)</th>
-            <th>Fica negativa em</th>
+            <th class="num">Saldo inicial jul/26</th>
+            <th class="num">Ago/26</th>
+            <th class="num">Set/26</th>
+            <th class="num">Out/26</th>
+            <th class="num">Nov/26</th>
+            <th class="num">Saldo final Dez/26</th>
+            <th>Quando fica negativa</th>
           </tr></thead>
           <tbody id="fluxoUnicoTbody"></tbody>
         </table>
@@ -562,224 +537,42 @@ document.getElementById('treeTabs').addEventListener('click', (e) => {
 const MESES_PT = {'01':'Jan','02':'Fev','03':'Mar','04':'Abr','05':'Mai','06':'Jun','07':'Jul','08':'Ago','09':'Set','10':'Out','11':'Nov','12':'Dez'};
 function fmtMes(m){ const [y,mm] = m.split('-'); return MESES_PT[mm] + '/' + y.slice(2); }
 
-function buildAreaChartSVG(months, values, opts){
-  const w = 900, h = 260, padL = 50, padR = 16, padT = 16, padB = 30;
-  const plotW = w - padL - padR, plotH = h - padT - padB;
-  const n = months.length;
-  const maxV = Math.max(...values, 0);
-  const minV = Math.min(...values, 0);
-  const range = (maxV - minV) || 1;
-  const xAt = (i) => padL + (i/(n-1)) * plotW;
-  const yAt = (v) => padT + plotH - ((v - minV) / range) * plotH;
-  const zeroY = yAt(0);
-
-  let pathD = `M ${xAt(0)} ${yAt(values[0])}`;
-  for(let i=1;i<n;i++) pathD += ` L ${xAt(i)} ${yAt(values[i])}`;
-  const areaD = pathD + ` L ${xAt(n-1)} ${zeroY} L ${xAt(0)} ${zeroY} Z`;
-
-  // split for coloring: use two clipped areas (above/below zero) via clip paths
-  const clipAboveId = 'clipAbove_' + opts.id;
-  const clipBelowId = 'clipBelow_' + opts.id;
-
-  // gridlines (4 horizontal)
-  let grid = '';
-  for(let g=0; g<=4; g++){
-    const gv = minV + (range*g/4);
-    const gy = yAt(gv);
-    grid += `<line x1="${padL}" y1="${gy}" x2="${w-padR}" y2="${gy}" stroke="var(--line)" stroke-width="1"/>`;
-    grid += `<text x="${padL-8}" y="${gy+3}" text-anchor="end" font-family="'IBM Plex Mono',monospace" font-size="9" fill="var(--text-dim)">${fmtCompact(gv).replace('R$ ','')}</text>`;
-  }
-  // month labels sparse (every 3rd)
-  let xlabels = '';
-  months.forEach((m,i) => {
-    if(i % 3 === 0 || i === n-1){
-      xlabels += `<text x="${xAt(i)}" y="${h-8}" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" fill="var(--text-dim)">${fmtMes(m)}</text>`;
-    }
-  });
-  // vertical marker for "hoje" (2026-08) if present
-  let todayMarker = '';
-  const todayIdx = months.indexOf(opts.todayMonth);
-  if(todayIdx >= 0){
-    todayMarker = `<line x1="${xAt(todayIdx)}" y1="${padT}" x2="${xAt(todayIdx)}" y2="${padT+plotH}" stroke="var(--gold)" stroke-width="1.5" stroke-dasharray="4 3"/>
-      <text x="${xAt(todayIdx)}" y="${padT-4}" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" fill="var(--gold)">hoje</text>`;
-  }
-  // dashed divider where projection starts
-  let projMarker = '';
-  if(opts.projStartIdx != null){
-    const px = xAt(opts.projStartIdx);
-    projMarker = `<line x1="${px}" y1="${padT}" x2="${px}" y2="${padT+plotH}" stroke="var(--text-dim)" stroke-width="1" stroke-dasharray="2 3"/>`;
-  }
-
-  return `
-    <svg width="100%" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" style="display:block;">
-      <defs>
-        <clipPath id="${clipAboveId}"><rect x="${padL}" y="${padT}" width="${plotW}" height="${zeroY-padT}"/></clipPath>
-        <clipPath id="${clipBelowId}"><rect x="${padL}" y="${zeroY}" width="${plotW}" height="${padT+plotH-zeroY}"/></clipPath>
-      </defs>
-      ${grid}
-      <path d="${areaD}" fill="var(--river)" opacity="0.14" clip-path="url(#${clipAboveId})"/>
-      <path d="${areaD}" fill="var(--rust)" opacity="0.18" clip-path="url(#${clipBelowId})"/>
-      <line x1="${padL}" y1="${zeroY}" x2="${w-padR}" y2="${zeroY}" stroke="var(--text-dim)" stroke-width="1"/>
-      ${projMarker}
-      <path d="${pathD}" fill="none" stroke="var(--river)" stroke-width="2"/>
-      ${todayMarker}
-      ${xlabels}
-    </svg>`;
-}
-
-function buildMultiLineChartSVG(months, series){
-  const w = 900, h = 260, padL = 55, padR = 16, padT = 16, padB = 30;
-  const plotW = w - padL - padR, plotH = h - padT - padB;
-  const n = months.length;
-  let allVals = [];
-  series.forEach(s => allVals = allVals.concat(s.values));
-  const maxV = Math.max(...allVals, 0);
-  const minV = Math.min(...allVals, 0);
-  const range = (maxV - minV) || 1;
-  const xAt = (i) => padL + (i/(n-1)) * plotW;
-  const yAt = (v) => padT + plotH - ((v - minV) / range) * plotH;
-  const zeroY = yAt(0);
-
-  let grid = '';
-  for(let g=0; g<=4; g++){
-    const gv = minV + (range*g/4);
-    const gy = yAt(gv);
-    grid += `<line x1="${padL}" y1="${gy}" x2="${w-padR}" y2="${gy}" stroke="var(--line)" stroke-width="1"/>`;
-    grid += `<text x="${padL-8}" y="${gy+3}" text-anchor="end" font-family="'IBM Plex Mono',monospace" font-size="9" fill="var(--text-dim)">${fmtCompact(gv).replace('R$ ','')}</text>`;
-  }
-  let xlabels = '';
-  months.forEach((m,i) => {
-    xlabels += `<text x="${xAt(i)}" y="${h-8}" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" fill="var(--text-dim)">${fmtMes(m)}</text>`;
-  });
-
-  let paths = '';
-  series.forEach(s => {
-    let d = `M ${xAt(0)} ${yAt(s.values[0])}`;
-    for(let i=1;i<n;i++) d += ` L ${xAt(i)} ${yAt(s.values[i])}`;
-    paths += `<path d="${d}" fill="none" stroke="${s.color}" stroke-width="2.2"/>`;
-    // dots
-    s.values.forEach((v,i) => {
-      paths += `<circle cx="${xAt(i)}" cy="${yAt(v)}" r="2.5" fill="${s.color}"><title>${fmtMes(months[i])}: ${fmt.format(v)}</title></circle>`;
-    });
-  });
-
-  return `
-    <svg width="100%" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" style="display:block;">
-      ${grid}
-      <line x1="${padL}" y1="${zeroY}" x2="${w-padR}" y2="${zeroY}" stroke="var(--text-dim)" stroke-width="1"/>
-      ${paths}
-      ${xlabels}
-    </svg>`;
-}
-
-let expandedFluxoFonte = new Set();
 function renderFluxoCaixa(){
-  const fc = DATA.fluxo_caixa;
   const fu = DATA.fluxo_unico;
-  const allMonths = fc.months.concat(fc.months_ext);
-  const allValues = fc.saldo_consolidado.concat(fc.saldo_ext);
-
-  document.getElementById('fluxoChart').innerHTML = `
-    <div style="font-family:'Fraunces',serif; font-size:15px; font-weight:600; color:var(--text); margin-bottom:4px;">Saldo de caixa consolidado</div>
-    <div style="font-size:11.5px; color:var(--text-dim); margin-bottom:10px;">Visão histórica/consolidada da planilha de fluxo de caixa original (dez/2024–dez/2026). A tabela por fonte abaixo já usa os dados mais recentes (reunião de jul/2026) — veja a seção "Cenário único" para o detalhamento mês a mês.</div>
-    ${buildAreaChartSVG(allMonths, allValues, {id:'consolidado', todayMonth:'2026-08', projStartIdx: fc.months.length-1})}
-    <div class="fluxo-legend">
-      <span><i class="sw" style="background:var(--river);"></i>Saldo positivo</span>
-      <span><i class="sw" style="background:var(--rust);"></i>Saldo negativo</span>
-      <span><i class="sw" style="background:var(--gold); border-style:dashed;"></i>Hoje (ago/2026)</span>
-    </div>`;
 
   function crossoverFu(fonte){
     const traj = fu.trajetorias[fonte];
     for(let i=1;i<traj.length;i++){
       if(traj[i-1] >= 0 && traj[i] < 0) return fmtMes(fu.todos_meses[i]);
     }
-    if(traj[0] < 0) return (fu.saldo_inicial[fonte] < 0) ? 'já negativa (jul/26)' : fmtMes(fu.todos_meses[0]) + ' (1º mês)';
-    return null;
-  }
-
-  const finepAlertBox = document.getElementById('fluxoAlert');
-  const crossRouanet = crossoverFu('ROUANET');
-  finepAlertBox.innerHTML = `
-    <div class="a-icon">⚠️</div>
-    <div class="a-text"><b>Rouanet fecha dezembro/2026 negativa</b> (${fmt.format(fu.trajetorias['ROUANET'][4])}), entrando no vermelho em ${crossRouanet} — mesmo com o reforço de Vale + New Fortress Energy. Hydro já está negativa desde jul/2026 (readequação encaminhada com a matriz). Dados da versão mais recente da planilha oficial (reunião jul/2026).</div>`;
-
-  const fontesOrder = ['HYDRO','BNDES','BID','ROUANET','CAF','FINEP','BRITISH COUNCIL','VNI'];
-  document.getElementById('fluxoFonteTbody').innerHTML = fontesOrder.map(fonte => {
-    const saldoAgo = fu.trajetorias[fonte][0];
-    const saldoDez = fu.trajetorias[fonte][4];
-    const cross = crossoverFu(fonte);
-    const badge = cross ? `<span class="fluxo-badge neg">${cross}</span>` : `<span class="fluxo-badge ok">positiva até jun/27</span>`;
-    return `<tr>
-      <td>${fonte.charAt(0)+fonte.slice(1).toLowerCase()}</td>
-      <td class="num" style="${saldoAgo<0?'color:var(--rust);':''}">${fmt.format(saldoAgo)}</td>
-      <td>${badge}</td>
-      <td class="num" style="${saldoDez<0?'color:var(--rust);':''}">${fmt.format(saldoDez)}</td>
-    </tr>`;
-  }).join('');
-
-
-  const PALETTE8 = ['#22D3C5','#E8B84B','#E0654B','#7f9edb','#B9C6E8','#8a6d2e','#4a6b97','#159E93'];
-  const series = fu.fontes.map((f,i) => ({key:f, values: fu.trajetorias[f], color: PALETTE8[i % PALETTE8.length]}));
-  document.getElementById('fluxoUnicoChart').innerHTML = buildMultiLineChartSVG(fu.todos_meses, series) + `
-    <div class="fluxo-legend">
-      ${fu.fontes.map((f,i) => `<span><i class="sw" style="background:${PALETTE8[i % PALETTE8.length]};"></i>${f.charAt(0)+f.slice(1).toLowerCase()}</span>`).join('')}
-    </div>`;
-
-  function findCrossoverUnico(traj, saldoInicial){
-    for(let i=1;i<traj.length;i++){
-      if(traj[i-1] >= 0 && traj[i] < 0) return fmtMes(fu.todos_meses[i]);
-    }
-    if(traj[0] < 0){
-      if(saldoInicial < 0) return 'já negativa em jul/26';
-      return fmtMes(fu.todos_meses[0]) + ' (1º mês da janela)';
-    }
+    if(traj[0] < 0) return (fu.saldo_inicial[fonte] < 0) ? 'já negativa em jul/26' : fmtMes(fu.todos_meses[0]) + ' (1º mês)';
     return null;
   }
 
   const fonteLabel = (f) => f.charAt(0)+f.slice(1).toLowerCase();
+  const fontesOrder = ['HYDRO','BNDES','BID','ROUANET','CAF','FINEP','BRITISH COUNCIL','VNI'];
 
-  document.getElementById('fluxoUnicoTbody').innerHTML = fu.fontes.map(f => {
+  document.getElementById('fluxoUnicoTbody').innerHTML = fontesOrder.map(f => {
     const inicial = fu.saldo_inicial[f];
-    const finalDez = fu.trajetorias[f][4]; // index 4 = dez/26
-    const cross = findCrossoverUnico(fu.trajetorias[f], inicial);
-    const badge = cross ? `<span class="fluxo-badge neg">${cross}</span>` : `<span class="fluxo-badge ok">até jun/27: ${fmtCompact(fu.trajetorias[f][fu.trajetorias[f].length-1])}</span>`;
-    const isOpen = expandedFluxoFonte.has(f);
-    let rows = `<tr class="tree-row-produto" data-fonte-row="${f}">
-      <td><span class="tree-toggle" data-fonte-toggle="${f}">${isOpen?'−':'+'}</span></td>
-      <td class="tree-name">${fonteLabel(f)}</td>
-      <td class="num" style="${inicial<0?'color:var(--rust);':'color:var(--text);'}">${fmt.format(inicial)}</td>
-      <td class="num" style="${finalDez<0?'color:var(--rust);':'color:var(--text);'}">${fmt.format(finalDez)}</td>
+    const ago = fu.trajetorias[f][0];
+    const set = fu.trajetorias[f][1];
+    const out = fu.trajetorias[f][2];
+    const nov = fu.trajetorias[f][3];
+    const dez = fu.trajetorias[f][4];
+    const cross = crossoverFu(f);
+    const badge = cross ? `<span class="fluxo-badge neg">${cross}</span>` : `<span class="fluxo-badge ok">positiva até jun/27</span>`;
+    const cellStyle = (v) => v<0 ? 'color:var(--rust);' : '';
+    return `<tr>
+      <td>${fonteLabel(f)}</td>
+      <td class="num" style="${cellStyle(inicial)}">${fmt.format(inicial)}</td>
+      <td class="num" style="${cellStyle(ago)}">${fmt.format(ago)}</td>
+      <td class="num" style="${cellStyle(set)}">${fmt.format(set)}</td>
+      <td class="num" style="${cellStyle(out)}">${fmt.format(out)}</td>
+      <td class="num" style="${cellStyle(nov)}">${fmt.format(nov)}</td>
+      <td class="num" style="${cellStyle(dez)}">${fmt.format(dez)}</td>
       <td>${badge}</td>
     </tr>`;
-    if(isOpen){
-      let saldo = inicial;
-      fu.todos_meses.forEach((m, i) => {
-        const isOficial = i < 5; // ago-dez/26 = oficial; jan-jun/27 = projeção própria
-        const receita = isOficial ? fu.receita_mensal[f][i] : 0;
-        const despesa = isOficial ? fu.despesa_mensal[f][i] : fu.despesa_mensal[f][4]; // extensão usa despesa de dez/26
-        saldo = saldo + receita - despesa;
-        const style = isOficial ? '' : 'font-style:italic; color:var(--text-dim);';
-        rows += `<tr class="tree-row-fornecedor">
-          <td></td>
-          <td class="tree-name" style="padding-left:22px; ${style}">${fmtMes(m)}${isOficial?'':' (projeção)'}</td>
-          <td class="num" style="${style}">${receita ? '+'+fmt.format(receita) : '—'}</td>
-          <td class="num" style="${style}">${despesa ? '−'+fmt.format(despesa) : '—'}</td>
-          <td class="num" style="${saldo<0?'color:var(--rust);':style}">${fmt.format(saldo)}</td>
-        </tr>`;
-      });
-    }
-    return rows;
   }).join('');
-
-  document.querySelectorAll('#fluxoUnicoTbody .tree-toggle[data-fonte-toggle]').forEach(el => {
-    el.addEventListener('click', () => {
-      const f = el.dataset.fonteToggle;
-      if(expandedFluxoFonte.has(f)) expandedFluxoFonte.delete(f);
-      else expandedFluxoFonte.add(f);
-      renderFluxoCaixa();
-    });
-  });
 }
 
 // ---------- Receitas table ----------
@@ -1009,30 +802,6 @@ function renderInsights(){
   const totalAReceber = DATA.receitas.total_geral.a_receber;
 
   const cards = [
-    {
-      cls:'risk', kicker:'⛔ Receitas ainda a receber', title:`${fmtCompact(totalAReceber)} previstos e ainda não recebidos`,
-      body:`Três receitas com vencimento em agosto/2026 ainda estão em aberto: <b>FINEP</b> — duas parcelas do título 1827/2024-2, de <span class="mono">R$ 2.919.629,00</span> e <span class="mono">R$ 2.261.534,00</span> (juntas <span class="mono">R$ 5.181.163,00</span>) — e <b>British Council</b> — <span class="mono">R$ 52.216,40</span> (vencimento 06/08/2026). Total ainda a receber: <span class="mono">${fmt.format(totalAReceber)}</span>.`
-    },
-    {
-      cls:'risk', kicker:'⛔ Prazo crítico', title:`${fmtCompact(t.saldo)} a contratar em ${days} dias`,
-      body:`Restam <b>${fmtCompact(t.saldo)}</b> de saldo a contratar entre Implantação e Operação, com apenas <b>${days} dias</b> até a reabertura em 28/ago.`
-    },
-    {
-      cls:'risk', kicker:'⛔ Núcleo da exposição', title:`Exposição de longa duração é o maior saldo aberto`,
-      body:`A linha <b>EXPOSIÇÃO</b> concentra o maior saldo a contratar da Implantação: <span class="mono">${expo?fmtCompact(expo.saldo):'—'}</span> pendente sobre um planejado de <span class="mono">${expo?fmtCompact(expo.planejado):'—'}</span> (${expo?expo.pct_executado.toFixed(1):'—'}% executado).`
-    },
-    {
-      cls:'', kicker:'Reserva e receita', title:`Reserva equivale a ${(h.reserva/h.receita_total*100).toFixed(1)}% da receita total`,
-      body:`Da receita total do projeto (<span class="mono">${fmt.format(h.receita_total)}</span>), <span class="mono">${fmt.format(h.reserva)}</span> estão reservados para eventualidades, deixando <span class="mono">${fmt.format(h.receita_liquida)}</span> disponíveis — praticamente o total planejado para Implantação + Operação (<span class="mono">${fmt.format(t.planejado)}</span>).`
-    },
-    {
-      cls:'watch', kicker:'⚠ Fontes com maior exposição', title:`${fontes[0].fonte} e ${fontes[1].fonte} concentram o saldo pendente`,
-      body:`<b>${fontes[0].fonte}</b> tem <span class="mono">${fmtCompact(fontes[0].saldo)}</span> ainda a contratar (${fontes[0].pct_executado.toFixed(1)}% executado), seguida por <b>${fontes[1].fonte}</b> com <span class="mono">${fmtCompact(fontes[1].saldo)}</span>.`
-    },
-    {
-      cls:'', kicker:'Pessoal na Operação', title:`RH da Operação é a linha menos executada`,
-      body:`Entre as macro linhas da Operação, <b>RECURSOS HUMANOS</b> está em apenas <b>${rhOp?rhOp.pct_executado.toFixed(1):'—'}%</b> de execução, com <span class="mono">${rhOp?fmtCompact(rhOp.saldo):'—'}</span> de saldo.`
-    },
     {
       cls:'watch wide', kicker:'⚠ Concentração de fornecedores', title:`Top 26 de ${fornArr.length} fornecedores externos = ${top26Pct}% do realizado + comprometido`,
       body:`No total, o orçamento tem <b>${fornArr.length} fornecedores externos</b> distintos (excluindo categorias internas como pessoal e impostos). Os 26 maiores, somando realizado + comprometido, já respondem por <b>${top26Pct}%</b> de tudo já realizado ou comprometido no orçamento total (Implantação + Operação + Institucional):${top26List}`
