@@ -65,7 +65,15 @@ h1.title em{font-style:italic; font-weight:300; color:var(--sand);}
 .kpi-reserva-note b{color:var(--text-mut); font-weight:600;}
 .spacer-note{font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.1em; margin:20px 0 8px;}
 
-.section{margin-bottom:36px;}
+.section{
+  margin-bottom:32px; padding:26px 28px; background:var(--bg-card);
+  border:1px solid var(--line); border-radius:14px; border-top:4px solid var(--line);
+  box-shadow:0 2px 10px rgba(16,43,84,0.05);
+}
+.sec-receita{border-top-color:var(--river-dim);}
+.sec-despesa{border-top-color:var(--gold);}
+.sec-fluxo{border-top-color:var(--rust);}
+.sec-analises{border-top-color:var(--sand);}
 .section-head{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:14px; gap:12px; flex-wrap:wrap;}
 .section-title{font-family:'Fraunces', serif; font-size:20px; font-weight:600; color:var(--text); display:flex; align-items:center; gap:10px;}
 .section-title .idx{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--river); border:1px solid var(--river-dim); border-radius:4px; padding:2px 6px;}
@@ -154,24 +162,6 @@ td.tag{color:var(--text-mut); font-size:11.5px;}
 .tree-total-card.inst{border-left:3px solid var(--sand);}
 .tree-total-card.mab{border-left:3px solid var(--river-dim);}
 
-.rxd-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:20px 0 26px;}
-@media (max-width:900px){.rxd-grid{grid-template-columns:1fr;}}
-.rxd-card{background:linear-gradient(160deg, var(--bg-card), var(--bg-panel)); border:1px solid var(--line); border-radius:var(--radius); padding:16px 18px 18px;}
-.rxd-card .rxd-title{font-family:'Fraunces',serif; font-size:14.5px; font-weight:600; color:var(--text); margin-bottom:12px;}
-.rxd-row{display:flex; justify-content:space-between; align-items:baseline; padding:5px 0; border-bottom:1px solid var(--line-soft);}
-.rxd-row:last-of-type{border-bottom:none;}
-.rxd-row .rxd-label{font-size:11.5px; color:var(--text-mut);}
-.rxd-row .rxd-value{font-family:'IBM Plex Mono',monospace; font-size:14px; font-weight:600; color:var(--text);}
-.rxd-row.receita .rxd-value{color:var(--river);}
-.rxd-row.despesa .rxd-value{color:var(--gold);}
-.rxd-saldo{margin-top:10px; padding-top:8px; border-top:1.5px solid var(--line); display:flex; justify-content:space-between; align-items:baseline;}
-.rxd-saldo .rxd-label{font-size:11.5px; color:var(--text-mut); text-transform:uppercase; letter-spacing:.04em;}
-.rxd-saldo .rxd-value{font-family:'IBM Plex Mono',monospace; font-size:16px; font-weight:700;}
-.rxd-saldo.pos .rxd-value{color:var(--river);}
-.rxd-saldo.neg .rxd-value{color:var(--rust);}
-.rxd-title-block{margin-bottom:2px;}
-.rxd-title-block .rxd-h{font-family:'Fraunces',serif; font-size:18px; font-weight:600; color:var(--text);}
-.rxd-title-block .rxd-sub{font-size:12px; color:var(--text-mut); margin-top:2px;}
 .tree-tabs{display:flex; gap:6px; margin-bottom:14px;}
 .tree-tab{font-family:'IBM Plex Mono',monospace; font-size:11.5px; padding:7px 14px; border-radius:6px; border:1px solid var(--line); background:transparent; color:var(--text-mut); cursor:pointer;}
 .tree-tab.active{background:var(--river-dim); color:#0a1d19; border-color:var(--river-dim); font-weight:600;}
@@ -190,15 +180,6 @@ tr.tree-row-item td.num{color:var(--text-mut);}
 #treeTable th.col-produto, #treeTable th.col-grande, #treeTable th.col-fornecedor, #treeTable th.col-descricao{min-width:120px;}
 #treeTable td.col-descricao{max-width:260px; color:var(--text-mut); font-size:12px; font-style:italic;}
 #treeTable thead th{color:var(--text); font-weight:600;}
-
-/* alert banner */
-.alert-banner{
-  display:flex; align-items:flex-start; gap:12px; padding:14px 18px; margin-bottom:14px;
-  background:linear-gradient(160deg, #FCE9E3, #FBDED5); border:1px solid var(--rust); border-radius:var(--radius);
-}
-.alert-banner .a-icon{font-size:18px; line-height:1.3;}
-.alert-banner .a-text{font-size:13px; color:#7A2E1E; line-height:1.55;}
-.alert-banner .a-text b{color:#5C2013;}
 
 
 .insights{display:grid; grid-template-columns:repeat(2,1fr); gap:14px;}
@@ -262,7 +243,7 @@ footer{margin-top:50px; padding-top:18px; border-top:1px solid var(--line); font
     <button class="tab active" data-fase="TODAS">Visão consolidada</button>
   </div>
 
-  <div class="section">
+  <div class="section sec-receita">
     <div class="section-head">
       <div class="section-title"><span class="idx">01</span>Receita</div>
       <div class="section-note">Captação por fase, com abertura por fonte pagadora e patrocinador.</div>
@@ -295,7 +276,7 @@ footer{margin-top:50px; padding-top:18px; border-top:1px solid var(--line); font
     </div>
   </div>
 
-  <div class="section">
+  <div class="section sec-despesa">
     <div class="section-head">
       <div class="section-title"><span class="idx">02</span>Despesa</div>
       <div class="section-note">Produto → Grande linha → Fornecedor → Descrição. Clique em <span style="color:var(--river)">+</span> / <span style="color:var(--river)">−</span> para expandir.</div>
@@ -327,20 +308,10 @@ footer{margin-top:50px; padding-top:18px; border-top:1px solid var(--line); font
     </div>
   </div>
 
-  <div class="rxd-title-block">
-    <div class="rxd-h">Receita × Despesa por fase</div>
-    <div class="rxd-sub">Compara o que foi captado (Receitas) com o que está planejado gastar (Despesas), por fase do projeto.</div>
-  </div>
-  <div class="rxd-grid" id="rxdGrid"></div>
-
-  <div class="section">
+  <div class="section sec-fluxo">
     <div class="section-head">
       <div class="section-title"><span class="idx">03</span>Fluxo de caixa projetado</div>
       <div class="section-note">Saldo por fonte de recurso, ago–dez/2026. Clique em <span style="color:var(--river)">+</span> para ver receita e despesa mensalizadas (jan–jul acumulado, depois mês a mês).</div>
-    </div>
-    <div class="alert-banner">
-      <div class="a-icon">⚠️</div>
-      <div class="a-text"><b>Com o saldo bancário conciliado, nenhuma fonte fica negativa entre ago e dez/2026.</b> Mas CAF e BID terminam o ano praticamente zeradas (R$ 1.895 e R$ 5.096) — qualquer atraso de receita ou despesa extra nessas duas pode virar o jogo rapidamente.</div>
     </div>
     <div class="panel" style="margin-top:14px;">
       <div class="table-scroll" style="max-height:400px;">
@@ -361,7 +332,7 @@ footer{margin-top:50px; padding-top:18px; border-top:1px solid var(--line); font
     </div>
   </div>
 
-  <div class="section">
+  <div class="section sec-analises">
     <div class="section-head">
       <div class="section-title"><span class="idx">04</span>Análises financeiras</div>
       <div class="section-note">Leituras geradas a partir dos dados do orçamento master.</div>
@@ -911,61 +882,6 @@ function renderInsights(){
   }).join('');
 }
 
-// ---------- Receita x Despesa por fase ----------
-function renderRxD(){
-  const rec = DATA.receitas.fases;
-  const findTotal = (tipo) => DATA.totals.find(t => t.tipo === tipo);
-  const despImplOpInst = findTotal('TODOS').planejado; // já inclui Implantação+Operação+Institucional (reclassificado)
-  const despMuseuAberto = findTotal('MUSEU ABERTO').planejado;
-  const despTotal = despImplOpInst + despMuseuAberto;
-
-  const cards = [
-    {
-      titulo: 'Fase 1 — Implantação + Operação',
-      receitaLabel: 'Receita captada (Fase 1)',
-      receita: rec.FASE1.captado,
-      despesaLabel: 'Despesa planejada (Implantação + Operação + Institucional)',
-      despesa: despImplOpInst
-    },
-    {
-      titulo: 'Fase 2 — Museu Aberto',
-      receitaLabel: 'Receita captada (Fase 2)',
-      receita: rec.FASE2.captado,
-      despesaLabel: 'Despesa planejada (Museu Aberto)',
-      despesa: despMuseuAberto
-    },
-    {
-      titulo: 'Total do projeto',
-      receitaLabel: 'Receita total captada',
-      receita: rec.TODAS.captado,
-      despesaLabel: 'Despesa total planejada',
-      despesa: despTotal
-    }
-  ];
-
-  document.getElementById('rxdGrid').innerHTML = cards.map(c => {
-    const saldo = c.receita - c.despesa;
-    const saldoClass = saldo >= 0 ? 'pos' : 'neg';
-    const saldoLabel = saldo >= 0 ? 'Receita cobre a despesa' : 'Despesa acima da receita';
-    return `
-    <div class="rxd-card">
-      <div class="rxd-title">${c.titulo}</div>
-      <div class="rxd-row receita">
-        <span class="rxd-label">${c.receitaLabel}</span>
-        <span class="rxd-value">${fmt.format(c.receita)}</span>
-      </div>
-      <div class="rxd-row despesa">
-        <span class="rxd-label">${c.despesaLabel}</span>
-        <span class="rxd-value">${fmt.format(c.despesa)}</span>
-      </div>
-      <div class="rxd-saldo ${saldoClass}">
-        <span class="rxd-label">${saldoLabel}</span>
-        <span class="rxd-value">${fmt.format(Math.abs(saldo))}</span>
-      </div>
-    </div>`;
-  }).join('');
-}
-
 // ---------- Render orchestration ----------
 function renderAll(){
   renderKPIs();
@@ -998,7 +914,6 @@ function safe(label, fn){
 safe('contagem regressiva', renderCountdown);
 safe('render geral', renderAll);
 safe('fluxo de caixa', renderFluxoCaixa);
-safe('receita x despesa por fase', renderRxD);
 safe('tabela por produto', renderTreeTable);
 safe('receitas', renderReceitas);
 safe('insights', renderInsights);
