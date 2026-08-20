@@ -68,7 +68,7 @@ h1.title em{font-style:italic; font-weight:300; color:var(--sand);}
 
 .section{
   margin-bottom:32px; padding:26px 28px; background:var(--bg-card);
-  border:1px solid var(--line); border-radius:14px; border-top:4px solid var(--line);
+  border:1px solid var(--line); border-radius:14px; border-top:7px solid var(--line);
   box-shadow:0 2px 10px rgba(16,43,84,0.05);
 }
 .sec-receita{border-top-color:var(--river-dim);}
@@ -76,8 +76,8 @@ h1.title em{font-style:italic; font-weight:300; color:var(--sand);}
 .sec-fluxo{border-top-color:var(--rust);}
 .sec-analises{border-top-color:var(--sand);}
 .section-head{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:14px; gap:12px; flex-wrap:wrap;}
-.section-title{font-family:'Fraunces', serif; font-size:20px; font-weight:600; color:var(--text); display:flex; align-items:center; gap:10px;}
-.section-title .idx{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--river); border:1px solid var(--river-dim); border-radius:4px; padding:2px 6px;}
+.section-title{font-family:'Fraunces', serif; font-size:26px; font-weight:600; color:var(--text); display:flex; align-items:center; gap:10px;}
+.section-title .idx{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--river); border:1px solid var(--river-dim); border-radius:4px; padding:3px 7px;}
 .section-note{font-size:12.5px; color:var(--text-dim); max-width:420px; text-align:right;}
 .panel{background:var(--bg-panel); border:1px solid var(--line); border-radius:var(--radius); padding:20px;}
 
@@ -151,6 +151,11 @@ td.tag{color:var(--text-mut); font-size:11.5px;}
 /* tree tabs + tree table (produto drill-down) */
 .tree-totals{display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:14px;}
 @media (max-width:640px){.tree-totals{grid-template-columns:1fr;}}
+.tree-total-kpi-group{margin-bottom:14px;}
+.kpi-mini-grid{display:flex; flex-direction:column; gap:10px;}
+.despesa-split{display:flex; gap:14px; align-items:flex-start;}
+.despesa-sidebar{width:280px; flex:0 0 280px;}
+@media (max-width:900px){.despesa-split{flex-direction:column;} .despesa-sidebar{width:100%; flex:1 1 auto;}}
 .tree-total-card{background:linear-gradient(160deg, var(--bg-card), var(--bg-panel)); border:1px solid var(--line); border-radius:var(--radius); padding:16px 18px 18px; min-width:0;}
 .tree-total-card .ttc-label{font-family:'Fraunces',serif; font-size:15px; font-weight:600; color:var(--text); margin-bottom:18px;}
 .tree-total-card .ttc-figs{display:flex; justify-content:space-between; gap:10px; font-family:'IBM Plex Mono',monospace; font-size:12px;}
@@ -239,9 +244,9 @@ footer{margin-top:50px; padding-top:18px; border-top:1px solid var(--line); font
   </header>
 
   <div class="tabs" id="tabBar">
-    <button class="tab" data-fase="FASE1">Fase 1 Implantação + Operação</button>
+    <button class="tab active" data-fase="FASE1">Fase 1 Implantação + Operação</button>
     <button class="tab" data-fase="FASE2">Fase 2 Museu Aberto</button>
-    <button class="tab active" data-fase="TODAS">Visão consolidada</button>
+    <button class="tab" data-fase="TODAS">Visão consolidada</button>
   </div>
 
   <div class="section sec-receita">
@@ -282,29 +287,32 @@ footer{margin-top:50px; padding-top:18px; border-top:1px solid var(--line); font
       <div class="section-title"><span class="idx">02</span>Despesas</div>
       <div class="section-note">Produto → Grande linha → Fornecedor → Descrição. Clique em <span style="color:var(--river)">+</span> / <span style="color:var(--river)">−</span> para expandir.</div>
     </div>
-    <div class="tree-totals" id="treeTotals"></div>
-    <div class="panel">
-      <div class="tree-tabs" id="treeTabs">
-        <button class="tree-tab active" data-tipo="IMPLANTAÇÃO">Implantação</button>
-        <button class="tree-tab" data-tipo="OPERAÇÃO">Operação</button>
-        <button class="tree-tab" data-tipo="INSTITUCIONAL">Institucional</button>
-        <button class="tree-tab" data-tipo="MUSEU ABERTO">Museu Aberto</button>
-      </div>
-      <div class="table-scroll" style="max-height:640px;">
-        <table id="treeTable">
-          <thead><tr>
-            <th style="width:36px;"></th>
-            <th data-key="produto">Produto</th>
-            <th data-key="grande">Grande linha</th>
-            <th data-key="fornecedor">Fornecedor</th>
-            <th data-key="descricao">Descrição</th>
-            <th data-key="planejado" class="num">Planejado</th>
-            <th data-key="realizado" class="num">Realizado</th>
-            <th data-key="comprometido" class="num">Comprometido</th>
-            <th data-key="saldo" class="num">Saldo a contratar</th>
-          </tr></thead>
-          <tbody id="treeTbody"></tbody>
-        </table>
+    <div id="treeCardsIndividuais"></div>
+    <div class="despesa-split">
+      <div id="treeGeralSidebar" class="despesa-sidebar"></div>
+      <div class="panel" style="flex:1; min-width:0;">
+        <div class="tree-tabs" id="treeTabs">
+          <button class="tree-tab active" data-tipo="IMPLANTAÇÃO">Implantação</button>
+          <button class="tree-tab" data-tipo="OPERAÇÃO">Operação</button>
+          <button class="tree-tab" data-tipo="INSTITUCIONAL">Institucional</button>
+          <button class="tree-tab" data-tipo="MUSEU ABERTO">Museu Aberto</button>
+        </div>
+        <div class="table-scroll" style="max-height:640px;">
+          <table id="treeTable">
+            <thead><tr>
+              <th style="width:36px;"></th>
+              <th data-key="produto">Produto</th>
+              <th data-key="grande">Grande linha</th>
+              <th data-key="fornecedor">Fornecedor</th>
+              <th data-key="descricao">Descrição</th>
+              <th data-key="planejado" class="num">Planejado</th>
+              <th data-key="realizado" class="num">Realizado</th>
+              <th data-key="comprometido" class="num">Comprometido</th>
+              <th data-key="saldo" class="num">Saldo a contratar</th>
+            </tr></thead>
+            <tbody id="treeTbody"></tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
@@ -359,7 +367,7 @@ const fmtCompact = (v) => {
 };
 
 let currentTipo = 'TODOS';
-let currentFase = 'TODAS';
+let currentFase = 'FASE1';
 let sortState = {grande:{key:'saldo',dir:-1}};
 
 // ---------- Countdown ----------
@@ -476,20 +484,42 @@ function renderTreeTotals(){
         <span class="f"><span class="fl">Saldo</span><span class="fv">${noRS(t.saldo)}</span></span>
       </div>
     </div>`;
-  const tipos = tiposForFase(currentFase);
-  let cardsHtml = tipos.map(t => card(cardDefs[t].label, sumTreeTotals(t), cardDefs[t].cls)).join('');
 
-  const tresBase = ['IMPLANTAÇÃO','OPERAÇÃO','INSTITUCIONAL'];
-  if(tresBase.every(t => tipos.includes(t))){
+  const kpiStyleCard = (label, t) => `
+    <div class="tree-total-kpi-group">
+      <div class="ttc-label" style="margin-bottom:10px;">${label}</div>
+      <div class="kpi-mini-grid">
+        <div class="kpi-box"><div class="kb-value">${fmtCompact(t.planejado)}</div><div class="kb-label">Planejado · ${fmt.format(t.planejado)}</div></div>
+        <div class="kpi-box"><div class="kb-value">${fmtCompact(t.realizado)}</div><div class="kb-label">Realizado · ${fmt.format(t.realizado)}</div></div>
+        <div class="kpi-box warn"><div class="kb-value">${fmtCompact(t.comprometido)}</div><div class="kb-label">Comprometido · ${fmt.format(t.comprometido)}</div></div>
+        <div class="kpi-box"><div class="kb-value">${fmtCompact(t.saldo)}</div><div class="kb-label">Saldo · ${fmt.format(t.saldo)}</div></div>
+      </div>
+    </div>`;
+
+  const tipos = tiposForFase(currentFase);
+  let geralLabel, geralTotals, individualCardsHtml;
+
+  if(tipos.length > 1){
     const soma = {planejado:0, realizado:0, comprometido:0, saldo:0};
-    tresBase.forEach(t => {
+    tipos.forEach(t => {
       const s = sumTreeTotals(t);
       soma.planejado += s.planejado; soma.realizado += s.realizado;
       soma.comprometido += s.comprometido; soma.saldo += s.saldo;
     });
-    cardsHtml += card('Total Geral (Implantação + Operação + Institucional)', soma, 'geral');
+    geralLabel = tipos.length === 4
+      ? 'Total Geral (Implantação + Operação + Institucional + Museu Aberto)'
+      : 'Total Geral (Implantação + Operação + Institucional)';
+    geralTotals = soma;
+    individualCardsHtml = `<div class="tree-totals">${tipos.map(t => card(cardDefs[t].label, sumTreeTotals(t), cardDefs[t].cls)).join('')}</div>`;
+  } else {
+    // FASE2: só Museu Aberto — o próprio vira o card "geral" em estilo KPI, sem duplicar em cima
+    geralLabel = cardDefs[tipos[0]].label;
+    geralTotals = sumTreeTotals(tipos[0]);
+    individualCardsHtml = '';
   }
-  document.getElementById('treeTotals').innerHTML = cardsHtml;
+
+  document.getElementById('treeCardsIndividuais').innerHTML = individualCardsHtml;
+  document.getElementById('treeGeralSidebar').innerHTML = kpiStyleCard(geralLabel, geralTotals);
 }
 
 function treeRowsFlat(){
