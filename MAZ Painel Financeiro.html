@@ -149,10 +149,9 @@ td.tag{color:var(--text-mut); font-size:11.5px;}
 .pager button:not(:disabled):hover{border-color:var(--river);}
 
 /* tree tabs + tree table (produto drill-down) */
-.tree-totals{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:14px;}
-@media (max-width:1100px){.tree-totals{grid-template-columns:repeat(2,1fr);}}
+.tree-totals{display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:14px;}
 @media (max-width:640px){.tree-totals{grid-template-columns:1fr;}}
-.tree-total-card{background:linear-gradient(160deg, var(--bg-card), var(--bg-panel)); border:1px solid var(--line); border-radius:var(--radius); padding:16px 18px 18px;}
+.tree-total-card{background:linear-gradient(160deg, var(--bg-card), var(--bg-panel)); border:1px solid var(--line); border-radius:var(--radius); padding:16px 18px 18px; min-width:0;}
 .tree-total-card .ttc-label{font-family:'Fraunces',serif; font-size:15px; font-weight:600; color:var(--text); margin-bottom:18px;}
 .tree-total-card .ttc-figs{display:flex; justify-content:space-between; gap:10px; font-family:'IBM Plex Mono',monospace; font-size:12px;}
 .tree-total-card .ttc-figs .f{text-align:center; flex:1;}
@@ -264,10 +263,10 @@ footer{margin-top:50px; padding-top:18px; border-top:1px solid var(--line); font
           <thead><tr>
             <th style="width:36px;"></th>
             <th>Fonte pagadora / Patrocinador</th>
+            <th class="num">Total geral</th>
             <th class="num">2024</th>
             <th class="num">2025</th>
             <th class="num">2026</th>
-            <th class="num">Total geral</th>
             <th class="num">A receber</th>
           </tr></thead>
           <tbody id="receitasTbody"></tbody>
@@ -667,10 +666,10 @@ function renderReceitas(){
       <tr class="tree-row-produto">
         <td><span class="tree-toggle" data-rkey="${key}">${expandedReceitas.has(key)?'−':'+'}</span></td>
         <td class="tree-name" style="padding-left:14px;">${f.fonte}</td>
+        <td class="num">${fmt.format(sub['total'])}</td>
         <td class="num">${fmt.format(sub['2024'])}</td>
         <td class="num">${fmt.format(sub['2025'])}</td>
         <td class="num">${fmt.format(sub['2026'])}</td>
-        <td class="num">${fmt.format(sub['total'])}</td>
         <td class="num" style="${sub['a_receber']>0?'color:var(--gold);font-weight:600;':''}">${sub['a_receber']>0 ? fmt.format(sub['a_receber']) : '—'}</td>
       </tr>`;
     if(expandedReceitas.has(key)){
@@ -679,10 +678,10 @@ function renderReceitas(){
           <tr class="tree-row-fornecedor">
             <td><span class="tree-toggle leaf">•</span></td>
             <td class="tree-name" style="padding-left:36px;">${p.nome}</td>
+            <td class="num">${fmt.format(p['total'])}</td>
             <td class="num">${p['2024'] ? fmt.format(p['2024']) : '—'}</td>
             <td class="num">${p['2025'] ? fmt.format(p['2025']) : '—'}</td>
             <td class="num">${p['2026'] ? fmt.format(p['2026']) : '—'}</td>
-            <td class="num">${fmt.format(p['total'])}</td>
             <td class="num" style="${p['a_receber']>0?'color:var(--gold);font-weight:600;':''}">${p['a_receber']>0 ? fmt.format(p['a_receber']) : '—'}</td>
           </tr>`;
       });
@@ -693,10 +692,10 @@ function renderReceitas(){
     <tr style="font-weight:600; border-top:2px solid var(--line);">
       <td></td>
       <td class="tree-name" style="padding-left:14px; color:var(--text); font-family:'Fraunces',serif;">Total geral</td>
+      <td class="num" style="color:var(--river);">${fmt.format(r.total_geral['total'])}</td>
       <td class="num" style="color:var(--text);">${fmt.format(r.total_geral['2024'])}</td>
       <td class="num" style="color:var(--text);">${fmt.format(r.total_geral['2025'])}</td>
       <td class="num" style="color:var(--text);">${fmt.format(r.total_geral['2026'])}</td>
-      <td class="num" style="color:var(--river);">${fmt.format(r.total_geral['total'])}</td>
       <td class="num" style="color:var(--gold);">${fmt.format(r.total_geral['a_receber'])}</td>
     </tr>`;
   document.getElementById('receitasTbody').querySelectorAll('.tree-toggle[data-rkey]').forEach(el => {
