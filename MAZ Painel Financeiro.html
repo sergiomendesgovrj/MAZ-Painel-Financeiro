@@ -1114,10 +1114,6 @@ tr.cx-fora td{background:rgba(169,117,15,.06);}
       </div>
     </div>
 
-    <div class="panel" style="margin-top:14px;">
-      <div class="fluxo-fonte-head">Curva mensal consolidada · jan/24 – abr/27</div>
-      <div id="fluxoChart"></div>
-    </div>
   </div>
 
   <!-- ================= 07 OPERAÇÃO 2027 ================= -->
@@ -1386,7 +1382,7 @@ function treeDe(t){
   if(_cacheInv[t]) return _cacheInv[t];
   const z = () => ({planejado:0,realizado:0,comprometido:0,saldo:0});
   const ad = (a,b) => ['planejado','realizado','comprometido','saldo'].forEach(k => a[k]+=b[k]);
-  const od = o => Object.fromEntries(Object.entries(o).sort((x,y) => (y[1].saldo-x[1].saldo) || (y[1].planejado-x[1].planejado)));
+  const od = o => Object.fromEntries(Object.entries(o).sort((x,y) => (y[1].planejado-x[1].planejado) || (y[1].saldo-x[1].saldo)));
   const out = {};
   Object.entries(DATA.tree[t]||{}).forEach(([e,en]) => {
     const E = Object.assign(z(), {children:{}}); out[e] = E;
@@ -1398,7 +1394,7 @@ function treeDe(t){
         ad(Dn, it); ad(G, it); ad(E, it);
       }));
       G.children = od(G.children);
-      Object.values(G.children).forEach(Dn => Dn.items.sort((x,y)=>(y.saldo-x.saldo)||(y.planejado-x.planejado)));
+      Object.values(G.children).forEach(Dn => Dn.items.sort((x,y)=>(y.planejado-x.planejado)||(y.saldo-x.saldo)));
     });
     E.children = od(E.children);
   });
@@ -2295,7 +2291,7 @@ safe('contagem regressiva', renderCountdown);
 safe('render geral', renderAll);
 safe('fluxo', renderFluxo);
 safe('legenda de títulos em aberto', renderLegendaAberto);
-safe('curva mensal', renderChart);
+
 safe('leituras', renderInsights);
 safe('barras de fase', renderSecBars);
 safe('Operação 2027', renderOp2027);
